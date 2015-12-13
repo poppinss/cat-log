@@ -1,5 +1,5 @@
 {
-  "name": "adonis-logger",
+  "name": "cat-log",
   "version": "1.0.0",
   "description": "Logger on top of npmlog and intercepts cli flags for showing log messages",
   "main": "index.js",
