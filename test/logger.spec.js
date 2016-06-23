@@ -16,6 +16,7 @@ describe('Logger', function() {
   it('should log using instance of Logger', function () {
     const inspect = stdout.inspect()
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.info('this is a log')
     inspect.restore()
@@ -30,6 +31,7 @@ describe('Logger', function() {
   it('should not log verbose logs when not in verbose mode', function () {
     const inspect = stdout.inspect()
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.verbose('debugging')
     inspect.restore()
@@ -44,6 +46,7 @@ describe('Logger', function() {
   it('should log verbose logs when in verbose mode', function () {
     const inspect = stdout.inspect()
     const logger = new Logger('', 'verbose')
+    logger.disableTimeStamps()
     let match = 0
     logger.verbose('debugging')
     inspect.restore()
@@ -58,6 +61,7 @@ describe('Logger', function() {
   it('should log warnings in info mode', function () {
     const inspect = stdout.inspect()
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.warn('what the heck')
     inspect.restore()
@@ -72,6 +76,7 @@ describe('Logger', function() {
   it('should log errors in info mode', function () {
     const inspect = stdout.inspect()
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.error('fire')
     inspect.restore()
@@ -86,6 +91,7 @@ describe('Logger', function() {
   it('should not log silly logs when not in silly mode', function () {
     const inspect = stdout.inspect()
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.silly('ahuhh')
     inspect.restore()
@@ -100,6 +106,7 @@ describe('Logger', function() {
   it('should log silly logs when in silly mode', function () {
     const inspect = stdout.inspect()
     const logger = new Logger('', 'silly')
+    logger.disableTimeStamps()
     let match = 0
     logger.silly('ahuhh')
     inspect.restore()
@@ -114,6 +121,7 @@ describe('Logger', function() {
   it('should show debug messages when in debug mode', function () {
     const inspect = stdout.inspect()
     const logger = new Logger('', 'debug')
+    logger.disableTimeStamps()
     let match = 0
     logger.debug(2+2)
     inspect.restore()
@@ -128,12 +136,13 @@ describe('Logger', function() {
   it('should add prefix when initated class with a prefix', function () {
     const inspect = stdout.inspect()
     const logger = new Logger('adonis', 'verbose')
+    logger.disableTimeStamps()
     let match = 0
     logger.disableColor()
     logger.verbose('debugging')
     inspect.restore()
     inspect.output.forEach(function (item) {
-      if(item.trim() === 'adonis debugging') {
+      if(item.trim() === 'adonis') {
         match++
       }
     })
@@ -144,6 +153,7 @@ describe('Logger', function() {
     const inspect = stdout.inspect()
     process.argv.push('--debug')
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.debug('received flag')
     inspect.restore()
@@ -159,6 +169,7 @@ describe('Logger', function() {
     const inspect = stdout.inspect()
     process.argv.push('--verbose')
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.verbose('received flag')
     inspect.restore()
@@ -174,6 +185,7 @@ describe('Logger', function() {
     const inspect = stdout.inspect()
     process.argv.push('--silly')
     const logger = new Logger()
+    logger.disableTimeStamps()
     let match = 0
     logger.silly('received flag')
     inspect.restore()
@@ -195,11 +207,11 @@ describe('Logger', function() {
       logger.info('2nd message')
       inspect.restore()
       inspect.output.forEach(function (item, index) {
-        if(item.trim() === '2nd message') {
-          matchedTime = inspect.output[index - 1]
+        if(item.trim().indexOf('2nd message') > -1) {
+          matchedTime = item.replace(/2nd message|ms|\s*/g, '')
         }
       })
-      expect(parseInt(matchedTime.replace('ms'))).to.be.greaterThan(9)
+      expect(parseInt(matchedTime)).to.be.greaterThan(9)
       done()
     }, 10)
   })

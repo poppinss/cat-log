@@ -10,17 +10,17 @@
 */
 
 const CatLog = require('../index')
-new CatLog().info('This is info')
-new CatLog().error('Some errors too')
+new CatLog('catlog').info('This is info')
+new CatLog('catlog').error('Some errors too')
 console.log('This is console.log info')
 setTimeout(function () {
-  new CatLog().info('After 20 milliseconds')
+  new CatLog('catlog').info('After 20 milliseconds')
 }, 20)
 
 setTimeout(function () {
-  new CatLog().info('After 40 milliseconds')
+  new CatLog('catlog').info('After 40 milliseconds')
 }, 60)
 
 setTimeout(function () {
-  new CatLog().info('After 1 second')
+  new CatLog('catlog').info('After 1 second')
 }, 2064)

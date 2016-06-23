@@ -16,15 +16,27 @@ class Logger {
   constructor(prefix, level) {
     const customLevel = this._returnCustomLevel()
     this.prefix = prefix || ''
+    this._disableColors = false
+    this._disableTime = false
     this.level = level || customLevel
   }
 
+  /**
+   * returns time to be displayed for logs
+   *
+   * @return  {String}
+   *
+   * @private
+   */
   _getDisplayTime () {
+    if (this._disableTime) {
+      return ''
+    }
     const currentTime = new Date()
-    const timeDiff = prevTime ? Math.abs(currentTime.getTime() - prevTime.getTime()) : 0
+    const timeDiff = prevTime ? `+${ms(Math.abs(currentTime.getTime() - prevTime.getTime()))}` : '0ms'
     prevTime = currentTime
     if (process.stdout.isTTY) {
-      return !this.disableColor ? `\u001b[033m+${ms(timeDiff)}\u001b[39m` : ms(timeDiff)
+      return !this._disableColors ? `\u001b[033m${timeDiff}\u001b[39m` : timeDiff
     }
     return `[${currentTime}]`
   }
@@ -69,7 +81,7 @@ class Logger {
    */
   _prefixAdditionals (args) {
     args.unshift(this.prefix)
-    args.unshift(this._getDisplayTime())
+    args[1] = `${this._getDisplayTime()} ${args[1]}`
   }
 
   /**
@@ -168,9 +180,23 @@ class Logger {
     log.silly.apply(this,args)
   }
 
+  /**
+   * disable local and npmlog colors
+   *
+   * @public
+   */
   disableColor() {
-    this.disableColor = true
+    this._disableColors = true
     log.disableColor()
+  }
+
+  /**
+   * disable timestamps
+   *
+   * @public
+   */
+  disableTimeStamps() {
+    this._disableTime = true
   }
 }
 
