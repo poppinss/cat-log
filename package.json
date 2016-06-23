@@ -1,6 +1,6 @@
 {
   "name": "cat-log",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Logger on top of npmlog and intercepts cli flags for showing log messages",
   "main": "index.js",
   "directories": {
