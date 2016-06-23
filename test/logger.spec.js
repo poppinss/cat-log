@@ -129,10 +129,11 @@ describe('Logger', function() {
     const inspect = stdout.inspect()
     const logger = new Logger('adonis', 'verbose')
     let match = 0
+    logger.disableColor()
     logger.verbose('debugging')
     inspect.restore()
     inspect.output.forEach(function (item) {
-      if(item.trim() === 'adonis'){
+      if(item.trim() === 'adonis debugging') {
         match++
       }
     })
@@ -182,6 +183,25 @@ describe('Logger', function() {
       }
     })
     expect(match).to.equal(1)
+  })
+
+  it('should tell the time spent between 2 logs', function (done) {
+    const inspect = stdout.inspect()
+    const logger = new Logger()
+    logger.disableColor()
+    let matchedTime = 0
+    logger.info('1st message')
+    setTimeout(function () {
+      logger.info('2nd message')
+      inspect.restore()
+      inspect.output.forEach(function (item, index) {
+        if(item.trim() === '2nd message') {
+          matchedTime = inspect.output[index - 1]
+        }
+      })
+      expect(parseInt(matchedTime.replace('ms'))).to.be.greaterThan(9)
+      done()
+    }, 10)
   })
 
 })

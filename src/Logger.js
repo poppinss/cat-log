@@ -7,6 +7,9 @@
 */
 
 const log = require('npmlog')
+const ms = require('ms')
+
+let prevTime = null
 
 class Logger {
 
@@ -14,6 +17,16 @@ class Logger {
     const customLevel = this._returnCustomLevel()
     this.prefix = prefix || ''
     this.level = level || customLevel
+  }
+
+  _getDisplayTime () {
+    const currentTime = new Date()
+    const timeDiff = prevTime ? Math.abs(currentTime.getTime() - prevTime.getTime()) : 0
+    prevTime = currentTime
+    if (process.stdout.isTTY) {
+      return !this.disableColor ? `\u001b[033m+${ms(timeDiff)}\u001b[39m` : ms(timeDiff)
+    }
+    return `[${currentTime}]`
   }
 
   /**
@@ -48,6 +61,18 @@ class Logger {
   }
 
   /**
+   * prefixing additional args before logging
+   *
+   * @param   {Array} args
+   *
+   * @private
+   */
+  _prefixAdditionals (args) {
+    args.unshift(this.prefix)
+    args.unshift(this._getDisplayTime())
+  }
+
+  /**
    * @description calls info method on npm
    * log object
    * @method info
@@ -59,7 +84,7 @@ class Logger {
   info () {
     this._setLevel()
     const args = Array.prototype.slice.call(arguments)
-    args.unshift(this.prefix)
+    this._prefixAdditionals(args)
     log.info.apply(this,args)
   }
 
@@ -75,7 +100,7 @@ class Logger {
   verbose () {
     this._setLevel()
     const args = Array.prototype.slice.call(arguments)
-    args.unshift(this.prefix)
+    this._prefixAdditionals(args)
     log.verbose.apply(this, args)
   }
 
@@ -91,7 +116,7 @@ class Logger {
   debug () {
     this._setLevel()
     const args = Array.prototype.slice.call(arguments)
-    args.unshift(this.prefix)
+    this._prefixAdditionals(args)
     log.http.apply(this,args)
   }
 
@@ -107,7 +132,7 @@ class Logger {
   warn () {
     this._setLevel()
     const args = Array.prototype.slice.call(arguments)
-    args.unshift(this.prefix)
+    this._prefixAdditionals(args)
     log.warn.apply(this,args)
   }
 
@@ -123,7 +148,7 @@ class Logger {
   error () {
     this._setLevel()
     const args = Array.prototype.slice.call(arguments)
-    args.unshift(this.prefix)
+    this._prefixAdditionals(args)
     log.error.apply(this,args)
   }
 
@@ -139,8 +164,13 @@ class Logger {
   silly () {
     this._setLevel()
     const args = Array.prototype.slice.call(arguments)
-    args.unshift(this.prefix)
+    this._prefixAdditionals(args)
     log.silly.apply(this,args)
+  }
+
+  disableColor() {
+    this.disableColor = true
+    log.disableColor()
   }
 }
 
